@@ -10,16 +10,19 @@ model = load_model(model_path)  # Load the model
 
 def denoise_image(model, noisy_image):
     """Denoise the image using the trained model."""
-    # Resize and convert to grayscale if necessary
-    noisy_image_resized = cv2.resize(noisy_image, (28, 28))  # Resize to 28x28
-    noisy_image_resized = cv2.cvtColor(noisy_image_resized, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
-    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)  # Add channel dimension
+    # Resize to 28x28
+    noisy_image_resized = cv2.resize(noisy_image, (28, 28))
+    noisy_image_resized = cv2.cvtColor(noisy_image_resized, cv2.COLOR_RGB2GRAY)
+    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)
 
-    # Preprocess the image
-    noisy_image_resized = noisy_image_resized / 255.0  # Normalize to [0, 1]
+    # Preprocess
+    noisy_image_resized = noisy_image_resized / 255.0
     noisy_image_resized = np.expand_dims(noisy_image_resized, axis=0)  # Add batch dimension
-    denoised_image = model.predict(noisy_image_resized)[0]  # Denoise the image
+
+    # Denoise
+    denoised_image = model.predict(noisy_image_resized)[0]
     return (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+
 
 
 # Streamlit App Layout
