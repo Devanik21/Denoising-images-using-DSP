@@ -17,24 +17,33 @@ def add_gaussian_noise(image, mean=0, sigma=25):
 
 def denoise_image(model, noisy_image):
     """Denoise the image using the trained model."""
-    # Resize to 28x28
+    # Resize to 28x28 for model input
     noisy_image_resized = cv2.resize(noisy_image, (28, 28))
+    
+    # Preprocess the image
     noisy_image_resized = cv2.cvtColor(noisy_image_resized, cv2.COLOR_RGB2GRAY)
-    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)
-
-    # Preprocess
-    noisy_image_resized = noisy_image_resized / 255.0
+    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)  # Add channel dimension
+    noisy_image_resized = noisy_image_resized / 255.0  # Normalize
     noisy_image_resized = np.expand_dims(noisy_image_resized, axis=0)  # Add batch dimension
 
-    # Denoise
+    # Denoise the image
     denoised_image = model.predict(noisy_image_resized)[0]
+
+    # Convert back to [0, 255] and ensure correct shape
+    denoised_image = (denoised_image * 255).astype(np.uint8)
     
-    # Ensure the denoised_image has the right format
-    denoised_image = (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+    # If your model is outputting a single channel, convert it to RGB
+    if denoised_image.shape[-1] == 1:  # Grayscale output
+        denoised_image = cv2.cvtColor(denoised_image.reshape(28, 28), cv2.COLOR_GRAY2RGB)
+    else:  # Already in RGB format
+        denoised_image = denoised_image.reshape(28, 28, 3)  # Ensure it's reshaped to (height, width, channels)
+
+    # Resize back to original dimensions
+    original_height, original_width = noisy_image.shape[:2]
+    denoised_image = cv2.resize(denoised_image, (original_width, original_height))
     
-    # Check dimensions
-    print("Denoised image shape:", denoised_image.shape)  # Debugging line
     return denoised_image
+
 
 def convert_to_image_bytes(image_np):
     """Convert NumPy array to PNG byte stream."""
