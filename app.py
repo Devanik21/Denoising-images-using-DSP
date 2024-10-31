@@ -5,7 +5,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 
 # Load your trained CNN model
-model_path = r"C:\imp\ml JUPYTER\MY ML PROJECTS(BOOK)\3.Deep learning\ANN\Recreation\DSP\autoencoder_model.h5"  # Update this with your model path
+model_path = r"autoencoder_model.h5"  # Update this with your model path
 model = load_model(model_path)  # Load the model
 
 def add_gaussian_noise(image, mean=0, sigma=25):
