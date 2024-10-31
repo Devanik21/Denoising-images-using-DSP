@@ -8,19 +8,19 @@ from PIL import Image
 model_path = r"autoencoder_model.h5"  # Update this with your model path
 model = load_model(model_path)  # Load the model
 
-def add_gaussian_noise(image, mean=0, sigma=25):
-    """Adds Gaussian noise to an image."""
-    noise = np.random.normal(mean, sigma, image.shape)
-    noisy_image = np.clip(image + noise, 0, 255)
-    return noisy_image.astype(np.uint8)
-
 def denoise_image(model, noisy_image):
     """Denoise the image using the trained model."""
+    # Resize and convert to grayscale if necessary
+    noisy_image_resized = cv2.resize(noisy_image, (28, 28))  # Resize to 28x28
+    noisy_image_resized = cv2.cvtColor(noisy_image_resized, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
+    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)  # Add channel dimension
+
     # Preprocess the image
-    noisy_image = noisy_image / 255.0  # Normalize to [0, 1]
-    noisy_image = np.expand_dims(noisy_image, axis=0)  # Add batch dimension
-    denoised_image = model.predict(noisy_image)[0]  # Denoise the image
+    noisy_image_resized = noisy_image_resized / 255.0  # Normalize to [0, 1]
+    noisy_image_resized = np.expand_dims(noisy_image_resized, axis=0)  # Add batch dimension
+    denoised_image = model.predict(noisy_image_resized)[0]  # Denoise the image
     return (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+
 
 # Streamlit App Layout
 st.title("Image Denoising App with Gaussian Noise")
