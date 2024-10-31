@@ -58,6 +58,4 @@ if uploaded_file is not None:
     # Optional: Provide download link for denoised image
     st.download_button("Download Denoised Image", data=denoised_image, file_name="denoised_image.png", mime="image/png")
 
-# Run the Streamlit app
-# To run the app, save this code as `app.py` and execute:
-# streamlit run app.py
+
