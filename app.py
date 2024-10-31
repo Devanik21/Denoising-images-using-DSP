@@ -17,24 +17,24 @@ def add_gaussian_noise(image, mean=0, sigma=25):
 
 def denoise_image(model, noisy_image):
     """Denoise the image using the trained model."""
-    # Resize to 28x28 and convert to grayscale
+    # Resize to 28x28
     noisy_image_resized = cv2.resize(noisy_image, (28, 28))
     noisy_image_resized = cv2.cvtColor(noisy_image_resized, cv2.COLOR_RGB2GRAY)
     noisy_image_resized = np.expand_dims(noisy_image_resized, axis=-1)
 
     # Preprocess
-    noisy_image_resized = noisy_image_resized / 255.0  # Normalize
+    noisy_image_resized = noisy_image_resized / 255.0
     noisy_image_resized = np.expand_dims(noisy_image_resized, axis=0)  # Add batch dimension
 
     # Denoise
     denoised_image = model.predict(noisy_image_resized)[0]
+    
+    # Ensure the denoised_image has the right format
     denoised_image = (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
-
-    # Resize back to original dimensions if necessary
-    denoised_image = cv2.resize(denoised_image, (original_image_np.shape[1], original_image_np.shape[0]))
+    
+    # Check dimensions
+    print("Denoised image shape:", denoised_image.shape)  # Debugging line
     return denoised_image
-
-
 
 def convert_to_image_bytes(image_np):
     """Convert NumPy array to PNG byte stream."""
