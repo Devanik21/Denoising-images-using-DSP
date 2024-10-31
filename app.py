@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from tensorflow.keras.models import load_model
 from PIL import Image
-import io  # Import io to handle byte stream
+import io
 
 # Load your trained CNN model
 model_path = r"autoencoder_model.h5"  # Update this with your model path
@@ -28,10 +28,21 @@ def denoise_image(model, noisy_image):
 
     # Denoise
     denoised_image = model.predict(noisy_image_resized)[0]
-    return (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+    
+    # Ensure the denoised_image has the right format
+    denoised_image = (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+    
+    # Check dimensions
+    print("Denoised image shape:", denoised_image.shape)  # Debugging line
+    return denoised_image
 
 def convert_to_image_bytes(image_np):
     """Convert NumPy array to PNG byte stream."""
+    if len(image_np.shape) == 2:  # Grayscale image
+        image_np = np.expand_dims(image_np, axis=-1)  # Add channel dimension if needed
+    elif len(image_np.shape) == 3 and image_np.shape[2] == 1:  # Single channel
+        image_np = np.squeeze(image_np)  # Remove single channel dimension
+        
     image_pil = Image.fromarray(image_np)  # Convert NumPy array to PIL Image
     byte_io = io.BytesIO()  # Create a byte stream
     image_pil.save(byte_io, format='PNG')  # Save the image to the byte stream
