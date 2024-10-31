@@ -10,14 +10,18 @@ def add_gaussian_noise(image, mean=0, sigma=25):
     return noisy_image
 
 def denoise_image(noisy_image):
-    """Denoise the image using Gaussian Blur."""
-    # Apply Gaussian blur to denoise the image
-    denoised_image = cv2.GaussianBlur(noisy_image, (5, 5), 0)
-    return denoised_image
+    """Denoise the image using Median and Bilateral filters."""
+    # Apply median filtering
+    median_filtered = cv2.medianBlur(noisy_image, 5)
+
+    # Apply bilateral filtering
+    bilateral_filtered = cv2.bilateralFilter(median_filtered, d=9, sigmaColor=75, sigmaSpace=75)
+
+    return bilateral_filtered
 
 # Streamlit App Layout
 st.title("Image Denoising App with Gaussian Noise")
-st.write("Upload an image to add Gaussian noise and denoise it using a simple Gaussian Blur filter.")
+st.write("Upload an image to add Gaussian noise and denoise it using improved filtering techniques.")
 
 # File uploader
 uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
