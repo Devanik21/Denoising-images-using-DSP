@@ -12,7 +12,7 @@ def add_gaussian_noise(image, mean=0, sigma=25):
 def denoise_image(noisy_image):
     """Denoise the image using enhanced Median and Bilateral filters."""
     # Apply median filtering with a larger kernel size
-    median_filtered = cv2.medianBlur(noisy_image, 1)  # Increase kernel size to 7
+    median_filtered = cv2.medianBlur(noisy_image, 10)  # Increase kernel size to 7
 
     # Apply bilateral filtering with adjusted parameters
     bilateral_filtered = cv2.bilateralFilter(median_filtered, d=15, sigmaColor=150, sigmaSpace=150)
