@@ -15,7 +15,7 @@ def denoise_image(noisy_image):
     median_filtered = cv2.medianBlur(noisy_image, 1)  # Increase kernel size to 7
 
     # Apply bilateral filtering with adjusted parameters
-    bilateral_filtered = cv2.bilateralFilter(median_filtered, d=15, sigmaColor=150, sigmaSpace=150)
+    bilateral_filtered = cv2.bilateralFilter(median_filtered, d=5, sigmaColor=150, sigmaSpace=150)
 
     return bilateral_filtered
 
