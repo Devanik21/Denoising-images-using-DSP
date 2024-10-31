@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from PIL import Image
 
-def add_gaussian_noise(image, mean=0, sigma=25):
+def add_gaussian_noise(image, mean=0, sigma=2500):
     """Add Gaussian noise to the image."""
     gauss = np.random.normal(mean, sigma, image.shape).astype('uint8')
     noisy_image = cv2.add(image, gauss)
