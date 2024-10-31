@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from tensorflow.keras.models import load_model
 from PIL import Image
+import io  # Import io to handle byte stream
 
 # Load your trained CNN model
 model_path = r"autoencoder_model.h5"  # Update this with your model path
@@ -28,6 +29,14 @@ def denoise_image(model, noisy_image):
     # Denoise
     denoised_image = model.predict(noisy_image_resized)[0]
     return (denoised_image * 255).astype(np.uint8)  # Convert back to [0, 255]
+
+def convert_to_image_bytes(image_np):
+    """Convert NumPy array to PNG byte stream."""
+    image_pil = Image.fromarray(image_np)  # Convert NumPy array to PIL Image
+    byte_io = io.BytesIO()  # Create a byte stream
+    image_pil.save(byte_io, format='PNG')  # Save the image to the byte stream
+    byte_io.seek(0)  # Seek to the start of the stream
+    return byte_io.getvalue()  # Return the byte data
 
 # Streamlit App Layout
 st.title("Image Denoising App with Gaussian Noise")
@@ -55,7 +64,12 @@ if uploaded_file is not None:
     # Display denoised image
     st.image(denoised_image, caption="Denoised Image", use_column_width=True)
 
+    # Convert denoised image to byte stream for download
+    denoised_image_bytes = convert_to_image_bytes(denoised_image)
+
     # Optional: Provide download link for denoised image
-    st.download_button("Download Denoised Image", data=denoised_image, file_name="denoised_image.png", mime="image/png")
+    st.download_button("Download Denoised Image", data=denoised_image_bytes, file_name="denoised_image.png", mime="image/png")
 
-
+# Run the Streamlit app
+# To run the app, save this code as `app.py` and execute:
+# streamlit run app.py
